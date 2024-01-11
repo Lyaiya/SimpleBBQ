@@ -5,6 +5,7 @@ import com.sihenzhang.simplebbq.SimpleBBQRegistry;
 import com.sihenzhang.simplebbq.util.JsonUtils;
 import net.minecraft.Util;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,9 +18,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -56,8 +56,8 @@ public class SeasoningRecipe implements Recipe<Container> {
     }
 
     @Override
-    public ItemStack assemble(Container pContainer) {
-        var result = pContainer.getItem(0);
+    public ItemStack assemble(Container container, RegistryAccess registryAccess) {
+        var result = container.getItem(0);
         var seasoningTag = result.getOrCreateTagElement("Seasoning");
         var seasoningList = seasoningTag.getList("SeasoningList", Tag.TAG_STRING);
         seasoningList.add(StringTag.valueOf(name.toLowerCase(Locale.ROOT)));
@@ -93,7 +93,7 @@ public class SeasoningRecipe implements Recipe<Container> {
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
         return ItemStack.EMPTY;
     }
 
@@ -112,7 +112,7 @@ public class SeasoningRecipe implements Recipe<Container> {
         return SimpleBBQRegistry.SEASONING_RECIPE_TYPE.get();
     }
 
-    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<SeasoningRecipe> {
+    public static class Serializer implements RecipeSerializer<SeasoningRecipe> {
         @Override
         public SeasoningRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
             var ingredient = JsonUtils.getAsIngredient(pSerializedRecipe, "ingredient");

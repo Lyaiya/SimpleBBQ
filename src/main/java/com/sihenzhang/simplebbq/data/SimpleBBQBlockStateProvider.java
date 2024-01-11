@@ -9,7 +9,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class SimpleBBQBlockStateProvider extends BlockStateProvider {
     public SimpleBBQBlockStateProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, SimpleBBQ.MOD_ID, existingFileHelper);
+        super(generator.getPackOutput(), SimpleBBQ.MOD_ID, existingFileHelper);
     }
 
     @Override

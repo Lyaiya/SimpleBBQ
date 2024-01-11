@@ -14,10 +14,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -40,17 +40,15 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.*;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -73,7 +71,7 @@ public class GrillBlock extends BaseEntityBlock implements SimpleWaterloggedBloc
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public GrillBlock() {
-        super(Properties.of(Material.METAL, MaterialColor.NONE).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.LANTERN).lightLevel(state -> state.getValue(LIT) ? 15 : 0).dynamicShape().noOcclusion());
+        super(Properties.of().mapColor(MapColor.NONE).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.LANTERN).lightLevel(state -> state.getValue(LIT) ? 15 : 0).dynamicShape().noOcclusion());
         this.registerDefaultState(stateDefinition.any().setValue(LIT, false).setValue(WATERLOGGED, false).setValue(FACING, Direction.NORTH));
     }
 
@@ -225,7 +223,7 @@ public class GrillBlock extends BaseEntityBlock implements SimpleWaterloggedBloc
                     damage = (float) campfireBlock.fireDamage;
                 }
             }
-            pEntity.hurt(DamageSource.HOT_FLOOR, damage);
+            pEntity.hurt(pLevel.damageSources().hotFloor(), damage);
         }
         super.stepOn(pLevel, pPos, pState, pEntity);
     }
@@ -350,12 +348,12 @@ public class GrillBlock extends BaseEntityBlock implements SimpleWaterloggedBloc
     }
 
     private static HitResult getPlayerHitResult(Player pPlayer) {
-        var reachDistanceAttribute = pPlayer.getAttribute(ForgeMod.REACH_DISTANCE.get());
-        var reachDistance = reachDistanceAttribute != null ? reachDistanceAttribute.getValue() : 5.0D;
+        var blockReachAttribute = pPlayer.getAttribute(ForgeMod.BLOCK_REACH.get());
+        var blockReach = blockReachAttribute != null ? blockReachAttribute.getValue() : 5.0D;
         if (pPlayer.isCreative()) {
-            reachDistance -= 0.5D;
+            blockReach -= 0.5D;
         }
-        return pPlayer.pick(reachDistance, 1.0F, false);
+        return pPlayer.pick(blockReach, 1.0F, false);
     }
 
     private static boolean isHittingGrill(BlockHitResult pHit) {
@@ -452,7 +450,7 @@ public class GrillBlock extends BaseEntityBlock implements SimpleWaterloggedBloc
     }
 
     @Override
-    public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, Random pRandom) {
+    public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
         if (pLevel.getBlockEntity(pPos) instanceof GrillBlockEntity grillBlockEntity) {
             var campfireState = grillBlockEntity.getCampfireData().toBlockState();
             if (isCampfire(campfireState)) {

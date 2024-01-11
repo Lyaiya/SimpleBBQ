@@ -12,6 +12,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -35,8 +36,10 @@ public class ModIntegrationJei implements IModPlugin {
     }
 
     @Override
-    public void registerRecipes(IRecipeRegistration registration) {
-        var recipeManager = Minecraft.getInstance().level.getRecipeManager();
+    public void registerRecipes(@NotNull IRecipeRegistration registration) {
+        var level = Minecraft.getInstance().level;
+        if (level == null) return;
+        var recipeManager = level.getRecipeManager();
         registration.addRecipes(GrillCookingCategory.RECIPE_TYPE, recipeManager.getAllRecipesFor(SimpleBBQRegistry.GRILL_COOKING_RECIPE_TYPE.get()));
         registration.addRecipes(CampfireCookingOnGrillCategory.RECIPE_TYPE, recipeManager.getAllRecipesFor(RecipeType.CAMPFIRE_COOKING));
         registration.addRecipes(SeasoningCategory.RECIPE_TYPE, recipeManager.getAllRecipesFor(SimpleBBQRegistry.SEASONING_RECIPE_TYPE.get()));

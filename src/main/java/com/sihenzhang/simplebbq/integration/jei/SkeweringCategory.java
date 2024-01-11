@@ -5,6 +5,7 @@ import com.sihenzhang.simplebbq.SimpleBBQRegistry;
 import com.sihenzhang.simplebbq.recipe.SkeweringRecipe;
 import com.sihenzhang.simplebbq.tag.SimpleBBQItemTags;
 import com.sihenzhang.simplebbq.util.I18nUtils;
+import com.sihenzhang.simplebbq.util.RecipeUtils;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -14,7 +15,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 
 public class SkeweringCategory implements IRecipeCategory<SkeweringRecipe> {
@@ -25,18 +25,6 @@ public class SkeweringCategory implements IRecipeCategory<SkeweringRecipe> {
     public SkeweringCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.drawableBuilder(ModIntegrationJei.RECIPE_GUI_VANILLA, 0, 168, 125, 18).build();
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, SimpleBBQRegistry.SKEWERING_TABLE_BLOCK_ITEM.get().getDefaultInstance());
-    }
-
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getUid() {
-        return this.getRecipeType().getUid();
-    }
-
-    @Override
-    @SuppressWarnings("removal")
-    public Class<? extends SkeweringRecipe> getRecipeClass() {
-        return this.getRecipeType().getRecipeClass();
     }
 
     @Override
@@ -63,6 +51,6 @@ public class SkeweringCategory implements IRecipeCategory<SkeweringRecipe> {
     public void setRecipe(IRecipeLayoutBuilder builder, SkeweringRecipe recipe, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.getIngredients().get(0));
         builder.addSlot(RecipeIngredientRole.INPUT, 50, 1).addIngredients(Ingredient.of(SimpleBBQItemTags.SKEWER));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 108, 1).addItemStack(recipe.getResultItem());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 108, 1).addItemStack(RecipeUtils.getResultItem(recipe));
     }
 }

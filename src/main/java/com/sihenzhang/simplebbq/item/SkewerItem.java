@@ -1,6 +1,5 @@
 package com.sihenzhang.simplebbq.item;
 
-import com.sihenzhang.simplebbq.SimpleBBQ;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
@@ -12,7 +11,7 @@ public class SkewerItem extends Item {
     private final int duration;
 
     public SkewerItem(Builder builder) {
-        super(new Properties().tab(SimpleBBQ.TAB).food(builder.foodBuilder.build()));
+        super(new Properties().food(builder.foodBuilder.build()));
         this.duration = builder.duration;
     }
 

@@ -3,8 +3,8 @@ package com.sihenzhang.simplebbq.client.particle;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CampfireSmokeUnderGrillParticle extends TextureSheetParticle {
     public CampfireSmokeUnderGrillParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
@@ -37,7 +37,7 @@ public class CampfireSmokeUnderGrillParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
+    public @NotNull ParticleRenderType getRenderType() {
         return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
@@ -50,7 +50,7 @@ public class CampfireSmokeUnderGrillParticle extends TextureSheetParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(SimpleParticleType pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
+        public Particle createParticle(@NotNull SimpleParticleType pType, @NotNull ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
             var campfireSmokeParticle = new CampfireSmokeUnderGrillParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
             campfireSmokeParticle.setAlpha(0.6F);
             campfireSmokeParticle.pickSprite(sprites);

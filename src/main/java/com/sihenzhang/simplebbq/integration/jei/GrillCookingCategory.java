@@ -6,7 +6,7 @@ import com.sihenzhang.simplebbq.recipe.GrillCookingRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public class GrillCookingCategory extends AbstractCookingWithoutFuelAndXpCategory<GrillCookingRecipe> {
     public static final RecipeType<GrillCookingRecipe> RECIPE_TYPE = RecipeType.create(SimpleBBQ.MOD_ID, "grill_cooking", GrillCookingRecipe.class);
@@ -16,19 +16,7 @@ public class GrillCookingCategory extends AbstractCookingWithoutFuelAndXpCategor
     }
 
     @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getUid() {
-        return this.getRecipeType().getUid();
-    }
-
-    @Override
-    @SuppressWarnings("removal")
-    public Class<? extends GrillCookingRecipe> getRecipeClass() {
-        return this.getRecipeType().getRecipeClass();
-    }
-
-    @Override
-    public RecipeType<GrillCookingRecipe> getRecipeType() {
+    public @NotNull RecipeType<GrillCookingRecipe> getRecipeType() {
         return RECIPE_TYPE;
     }
 }

@@ -3,8 +3,8 @@ package com.sihenzhang.simplebbq.integration.jei;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.sihenzhang.simplebbq.util.I18nUtils;
+import com.sihenzhang.simplebbq.util.RecipeUtils;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -14,8 +14,10 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractCookingWithoutFuelAndXpCategory<T extends AbstractCookingRecipe> implements IRecipeCategory<T> {
     private final IDrawableAnimated animatedFlame;
@@ -40,28 +42,28 @@ public abstract class AbstractCookingWithoutFuelAndXpCategory<T extends Abstract
     }
 
     @Override
-    public Component getTitle() {
+    public @NotNull Component getTitle() {
         return title;
     }
 
     @Override
-    public IDrawable getBackground() {
+    public @NotNull IDrawable getBackground() {
         return background;
     }
 
     @Override
-    public IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, T recipe, @NotNull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.getIngredients().get(0));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 9).addItemStack(recipe.getResultItem());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 9).addItemStack(RecipeUtils.getResultItem(recipe));
     }
 
     @Override
-    public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack stack, double mouseX, double mouseY) {
+    public void draw(T recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics stack, double mouseX, double mouseY) {
         animatedFlame.draw(stack, 1, 20);
 
         var cookingTime = recipe.getCookingTime();
@@ -78,13 +80,14 @@ public abstract class AbstractCookingWithoutFuelAndXpCategory<T extends Abstract
         return this.cachedArrows.getUnchecked(cookingTime);
     }
 
-    protected void drawCookingTime(int cookingTime, PoseStack stack) {
-        if (cookingTime > 0) {
-            var cookingTimeSeconds = cookingTime / 20;
-            var timeText = I18nUtils.createComponent("gui", ModIntegrationJei.MOD_ID, "category.smelting.time.seconds", cookingTimeSeconds);
-            var fontRenderer = Minecraft.getInstance().font;
-            var stringWidth = fontRenderer.width(timeText);
-            fontRenderer.draw(stack, timeText, background.getWidth() - stringWidth, 35, 0xFF808080);
+    protected void drawCookingTime(int cookingTime, GuiGraphics guiGraphics) {
+        if (cookingTime <= 0) {
+            return;
         }
+        var cookingTimeSeconds = cookingTime / 20;
+        var timeText = I18nUtils.createComponent("gui", ModIntegrationJei.MOD_ID, "category.smelting.time.seconds", cookingTimeSeconds);
+        var fontRenderer = Minecraft.getInstance().font;
+        var stringWidth = fontRenderer.width(timeText);
+        guiGraphics.drawString(fontRenderer, timeText, background.getWidth() - stringWidth, 35, 0xFF808080);
     }
 }

@@ -15,7 +15,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class SimpleBBQItemModelProvider extends ItemModelProvider {
     public SimpleBBQItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, SimpleBBQ.MOD_ID, existingFileHelper);
+        super(generator.getPackOutput(), SimpleBBQ.MOD_ID, existingFileHelper);
     }
 
     @Override

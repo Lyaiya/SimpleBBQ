@@ -15,17 +15,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public class SkeweringTableBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public SkeweringTableBlock() {
-        super(Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD).noOcclusion());
+        super(Properties.of().ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.WOOD).noOcclusion());
         this.registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
@@ -36,8 +37,7 @@ public class SkeweringTableBlock extends BaseEntityBlock {
      * @see com.sihenzhang.simplebbq.event.PlayerUseSkeweringTableToSkewerEvent
      */
     @Override
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public @NotNull InteractionResult use(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
         if (pLevel.getBlockEntity(pPos) instanceof SkeweringTableBlockEntity skeweringTableBlockEntity) {
             var stackInHand = pPlayer.getItemInHand(pHand);
 
@@ -61,8 +61,7 @@ public class SkeweringTableBlock extends BaseEntityBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+    public void onRemove(BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if (!pState.is(pNewState.getBlock())) {
             var blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof SkeweringTableBlockEntity skeweringTableBlockEntity) {
@@ -79,20 +78,17 @@ public class SkeweringTableBlock extends BaseEntityBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public RenderShape getRenderShape(BlockState pState) {
+    public @NotNull RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public BlockState rotate(BlockState pState, Rotation pRot) {
+    public @NotNull BlockState rotate(BlockState pState, Rotation pRot) {
         return pState.setValue(FACING, pRot.rotate(pState.getValue(FACING)));
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public BlockState mirror(BlockState pState, Mirror pMirror) {
+    public @NotNull BlockState mirror(BlockState pState, Mirror pMirror) {
         return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
     }
 

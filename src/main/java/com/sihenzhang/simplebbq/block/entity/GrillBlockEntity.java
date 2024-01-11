@@ -6,6 +6,7 @@ import com.sihenzhang.simplebbq.block.GrillBlock;
 import com.sihenzhang.simplebbq.recipe.SeasoningRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -32,9 +33,9 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class GrillBlockEntity extends BlockEntity {
@@ -49,7 +50,7 @@ public class GrillBlockEntity extends BlockEntity {
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return getCookingRecipe(new SimpleContainer(stack), level).isPresent();
         }
 
@@ -98,7 +99,7 @@ public class GrillBlockEntity extends BlockEntity {
                     pBlockEntity.cookingProgress[i]++;
                     if (pBlockEntity.cookingProgress[i] >= pBlockEntity.cookingTime[i]) {
                         var container = new SimpleContainer(stackInSlot);
-                        var result = pBlockEntity.getCookingRecipe(container, pLevel).map(recipe -> recipe.assemble(container)).orElse(stackInSlot);
+                        var result = pBlockEntity.getCookingRecipe(container, pLevel).map(recipe -> recipe.assemble(container, RegistryAccess.EMPTY)).orElse(stackInSlot);
                         var seasoningTag = stackInSlot.getTagElement("Seasoning");
                         if (seasoningTag != null) {
                             seasoningTag.putBoolean("HasEffect", true);
@@ -255,7 +256,7 @@ public class GrillBlockEntity extends BlockEntity {
             return false;
         }
         var recipe = optionalRecipe.get();
-        var result = recipe.assemble(container);
+        var result = recipe.assemble(container, player.level().registryAccess());
         if (result.isEmpty()) {
             return false;
         }
@@ -270,11 +271,13 @@ public class GrillBlockEntity extends BlockEntity {
 
     private void markUpdated() {
         this.setChanged();
-        level.sendBlockUpdated(worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
+        }
     }
 
     public static final class CampfireData implements INBTSerializable<CompoundTag> {
-        public ResourceLocation registryName = Blocks.AIR.getRegistryName();
+        public ResourceLocation registryName = ForgeRegistries.BLOCKS.getKey(Blocks.AIR);
         public boolean lit = false;
         public Direction facing;
 
@@ -283,7 +286,7 @@ public class GrillBlockEntity extends BlockEntity {
 
         public CampfireData(BlockState state) {
             Preconditions.checkArgument(GrillBlock.isCampfire(state), "State must be a Campfire.");
-            this.registryName = state.getBlock().getRegistryName();
+            this.registryName = ForgeRegistries.BLOCKS.getKey(state.getBlock());
             this.lit = state.getValue(BlockStateProperties.LIT);
             if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
                 this.facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
@@ -311,10 +314,11 @@ public class GrillBlockEntity extends BlockEntity {
         }
 
         public BlockState toBlockState() {
-            if (registryName == null) {
+            var block = ForgeRegistries.BLOCKS.getValue(registryName);
+            if (registryName == null || block == null) {
                 return Blocks.AIR.defaultBlockState();
             }
-            var state = ForgeRegistries.BLOCKS.getValue(registryName).defaultBlockState();
+            var state = block.defaultBlockState();
             if (state.hasProperty(BlockStateProperties.LIT)) {
                 state = state.setValue(BlockStateProperties.LIT, lit);
             }

@@ -1,0 +1,4 @@
+// 1.20.1	2024-01-11T16:53:52.0424765	SimpleBBQ Block Tags
+9b6c6bef34c96a533763cc468190a18c633a5a03 data/minecraft/tags/blocks/mineable/axe.json
+4de129f33863186e12bb5b1d45b30f410e095c86 data/minecraft/tags/blocks/mineable/pickaxe.json
+4de129f33863186e12bb5b1d45b30f410e095c86 data/minecraft/tags/blocks/needs_stone_tool.json
