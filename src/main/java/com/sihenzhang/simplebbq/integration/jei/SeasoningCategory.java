@@ -19,6 +19,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -32,7 +33,7 @@ public class SeasoningCategory implements IRecipeCategory<SeasoningRecipe> {
     private final LoadingCache<SeasoningRecipe, List<ItemStack>> cachedResultItems;
 
     public SeasoningCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.drawableBuilder(ModIntegrationJei.RECIPE_GUI_VANILLA, 0, 168, 125, 18).build();
+        this.background = guiHelper.createDrawable(ModIntegrationJei.RECIPE_GUI_VANILLA, 0, 168, 125, 18);
         this.icon = new DrawableDoubleItemStack(SimpleBBQRegistry.GRILL_BLOCK_ITEM.get().getDefaultInstance(), SimpleBBQRegistry.CHILI_POWDER.get().getDefaultInstance());
         this.cachedResultItems = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<>() {
             @Override
@@ -52,37 +53,37 @@ public class SeasoningCategory implements IRecipeCategory<SeasoningRecipe> {
     }
 
     @Override
-    public RecipeType<SeasoningRecipe> getRecipeType() {
+    public @NotNull RecipeType<SeasoningRecipe> getRecipeType() {
         return RECIPE_TYPE;
     }
 
     @Override
-    public Component getTitle() {
+    public @NotNull Component getTitle() {
         return I18nUtils.createIntegrationComponent(ModIntegrationJei.MOD_ID, "category.seasoning");
     }
 
     @Override
-    public IDrawable getBackground() {
+    public @NotNull IDrawable getBackground() {
         return background;
     }
 
     @Override
-    public IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, SeasoningRecipe recipe, IFocusGroup focuses) {
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, SeasoningRecipe recipe, @NotNull IFocusGroup focuses) {
         var inputItems = List.of(recipe.getIngredient().getItems());
         if (inputItems.stream().anyMatch(stack -> focuses.getFocuses(VanillaTypes.ITEM_STACK, RecipeIngredientRole.OUTPUT).anyMatch(focus -> ItemStack.isSameItem(stack, focus.getTypedValue().getIngredient())))) {
             inputItems = inputItems.stream().filter(stack -> focuses.getFocuses(VanillaTypes.ITEM_STACK, RecipeIngredientRole.OUTPUT).anyMatch(focus -> ItemStack.isSameItem(stack, focus.getTypedValue().getIngredient()))).toList();
         }
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addItemStacks(inputItems);
-        builder.addSlot(RecipeIngredientRole.INPUT, 50, 1).addIngredients(recipe.getSeasoning());
+        builder.addSlot(RecipeIngredientRole.INPUT, 37, 1).addIngredients(recipe.getSeasoning());
         var resultItems = cachedResultItems.getUnchecked(recipe);
         if (resultItems.stream().anyMatch(stack -> focuses.getFocuses(VanillaTypes.ITEM_STACK, RecipeIngredientRole.INPUT).anyMatch(focus -> ItemStack.isSameItem(stack, focus.getTypedValue().getIngredient())))) {
             resultItems = resultItems.stream().filter(stack -> focuses.getFocuses(VanillaTypes.ITEM_STACK, RecipeIngredientRole.INPUT).anyMatch(focus -> ItemStack.isSameItem(stack, focus.getTypedValue().getIngredient()))).toList();
         }
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 108, 1).addItemStacks(resultItems);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 91, 1).addItemStacks(resultItems);
     }
 }

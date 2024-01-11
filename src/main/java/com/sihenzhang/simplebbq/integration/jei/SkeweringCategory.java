@@ -16,6 +16,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.NotNull;
 
 public class SkeweringCategory implements IRecipeCategory<SkeweringRecipe> {
     public static final RecipeType<SkeweringRecipe> RECIPE_TYPE = RecipeType.create(SimpleBBQ.MOD_ID, "skewering", SkeweringRecipe.class);
@@ -23,34 +24,34 @@ public class SkeweringCategory implements IRecipeCategory<SkeweringRecipe> {
     private final IDrawable icon;
 
     public SkeweringCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.drawableBuilder(ModIntegrationJei.RECIPE_GUI_VANILLA, 0, 168, 125, 18).build();
+        this.background = guiHelper.createDrawable(ModIntegrationJei.RECIPE_GUI_VANILLA, 0, 168, 125, 18);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, SimpleBBQRegistry.SKEWERING_TABLE_BLOCK_ITEM.get().getDefaultInstance());
     }
 
     @Override
-    public RecipeType<SkeweringRecipe> getRecipeType() {
+    public @NotNull RecipeType<SkeweringRecipe> getRecipeType() {
         return RECIPE_TYPE;
     }
 
     @Override
-    public Component getTitle() {
+    public @NotNull Component getTitle() {
         return I18nUtils.createIntegrationComponent(ModIntegrationJei.MOD_ID, "category.skewering");
     }
 
     @Override
-    public IDrawable getBackground() {
+    public @NotNull IDrawable getBackground() {
         return background;
     }
 
     @Override
-    public IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, SkeweringRecipe recipe, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, SkeweringRecipe recipe, @NotNull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.getIngredients().get(0));
-        builder.addSlot(RecipeIngredientRole.INPUT, 50, 1).addIngredients(Ingredient.of(SimpleBBQItemTags.SKEWER));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 108, 1).addItemStack(RecipeUtils.getResultItem(recipe));
+        builder.addSlot(RecipeIngredientRole.INPUT, 37, 1).addIngredients(Ingredient.of(SimpleBBQItemTags.SKEWER));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 91, 1).addItemStack(RecipeUtils.getResultItem(recipe));
     }
 }

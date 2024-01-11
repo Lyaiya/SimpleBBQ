@@ -19,10 +19,10 @@ import java.util.List;
 @JeiPlugin
 public class ModIntegrationJei implements IModPlugin {
     public static final String MOD_ID = "jei";
-    public static final ResourceLocation RECIPE_GUI_VANILLA = RLUtils.createRL(MOD_ID, "textures/gui/gui_vanilla.png");
+    public static final ResourceLocation RECIPE_GUI_VANILLA = RLUtils.createRL(MOD_ID, "textures/jei/gui/gui_vanilla.png");
 
     @Override
-    public ResourceLocation getPluginUid() {
+    public @NotNull ResourceLocation getPluginUid() {
         return RLUtils.createRL("simple_bbq");
     }
 
